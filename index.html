@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMS Productivity Tools</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- AUTH SECTION -->
+    <div id="auth-container" class="card">
+        <div class="auth-box">
+            <div class="auth-logo">🏥</div>
+            <h2>GMS Portal</h2>
+            <p>Welcome back. Please login to continue.</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter username" required>
+                </div>
+                <div class="form-group" style="position:relative;">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required style="padding-right: 40px;">
+                    <svg onmousedown="togglePwd('password', this, true)" onmouseup="togglePwd('password', this, false)" onmouseleave="togglePwd('password', this, false)" style="position:absolute; right:12px; top:35px; cursor:pointer; opacity: 0.5; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
+            
+            <form id="register-form" style="display: none;">
+                <div class="form-group">
+                    <label for="reg-username">Choose Username</label>
+                    <input type="text" id="reg-username" placeholder="e.g. jdoe_gms" required>
+                </div>
+                <div class="form-group" style="position: relative;">
+                    <label for="reg-password">Create Password</label>
+                    <input type="password" id="reg-password" placeholder="Min. 8 characters" required style="padding-right: 40px;">
+                    <svg onmousedown="togglePwd('reg-password', this, true)" onmouseup="togglePwd('reg-password', this, false)" onmouseleave="togglePwd('reg-password', this, false)" style="position:absolute; right:12px; top:35px; cursor:pointer; opacity: 0.5; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    <div class="policy-hint">Must include 8+ characters, 1 number, and 1 special symbol (e.g. @, #, !).</div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Submit Registration Request</button>
+                <div class="policy-hint" style="text-align: center; margin-top: 0.75rem;">Note: New accounts require manual approval by Administrator (Deena).</div>
+            </form>
+
+            <div id="login-error" class="error-msg"></div>
+
+            <div class="auth-toggle" style="margin-top: 1.5rem; font-size: 0.85rem;">
+                <span id="toggle-text">Don't have an account?</span>
+                <a href="#" id="btn-toggle-auth" style="color: var(--accent-primary); text-decoration: none; font-weight: 600; margin-left: 0.5rem;">Register here</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP SECTION -->
+    <div id="app-container" style="display: none;">
+        <div class="main-layout">
+            <!-- SIDEBAR -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <span class="sidebar-logo">🏥</span>
+                    <div class="user-info-bar" style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 0.5rem; border-radius: 8px; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'" onclick="document.getElementById('user-profile-modal').style.display='flex'" title="View Profile">
+                        <div id="online-indicator" class="online-dot"></div>
+                        <div class="user-welcome">
+                            <div id="user-greeting" class="greeting-text">Welcome</div>
+                            <div id="user-display" class="username-text">Guest</div>
+                        </div>
+                    </div>
+                </div>
+                <nav class="nav-menu">
+                    <a href="#" id="tab-tfl" class="nav-item active"><span class="icon">📝</span> Payer TFL Calculator</a>
+                    <a href="#" id="tab-dos" class="nav-item"><span class="icon">🔍</span> DOS Range Calculator</a>
+                    <a href="#" id="tab-denial" class="nav-item"><span class="icon">🔖</span> Denial Reason Analyzer</a>
+                    <a href="#" id="tab-callog" class="nav-item"><span class="icon">📞</span> Payer Directory</a>
+                    <a href="#" id="tab-prod" class="nav-item"><span class="icon">📊</span> Target Tracker</a>
+                    <a href="#" id="tab-time" class="nav-item"><span class="icon">🕒</span> Login & Break Tracker</a>
+                    <a href="#" id="tab-julian" class="nav-item"><span class="icon">📅</span> Julian Calculator</a>
+                    <a href="#" id="tab-appeals" class="nav-item"><span class="icon">📨</span> Appeals Tracker</a>
+                    <a href="#" id="tab-admin" class="nav-item" style="display:none;"><span class="icon">🔑</span> Admin Panel</a>
+                </nav>
+                <div class="sidebar-footer">
+                    <div class="logout-wrapper">
+                        <button class="btn btn-secondary btn-sm" id="btn-logout" style="width:100%;">Logout</button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- MAIN CONTENT -->
+            <main class="content-pane">
+
+                <!-- 1. TFL Calculator -->
+                <div id="view-tfl" class="view-section active">
+                    <div class="section-header">
+                        <h2>Payer TFL Calculator</h2>
+                        <div class="format-select">
+                            <label>Output Date Format</label>
+                            <select id="tfl-format" onchange="calculateTfl()">
+                                <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                <option value="WORD">Word Format</option>
+                                <option value="DAY_WORD">Day & Word</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="calc-row">
+                        <div class="form-group fg-grow">
+                            <label>Date of Service (DOS)</label>
+                            <input type="text" id="tfl-dos" placeholder="mm/dd/yyyy" class="input-lg" oninput="calculateTfl()">
+                        </div>
+                        <div class="calc-op">+</div>
+                        <div class="form-group fg-mid">
+                            <label>Limit (Days)</label>
+                            <input type="number" id="tfl-limit" value="120" class="input-lg input-center" oninput="calculateTfl()">
+                        </div>
+                        <div class="calc-op">=</div>
+                        <div class="fg-grow">
+                            <label class="result-label">Deadline Date</label>
+                            <div id="tfl-result" class="result-display">--</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. DOS Range Calculator -->
+                <div id="view-dos" class="view-section" style="display:none;">
+                    <div class="section-header">
+                        <h2>DOS Range Calculator</h2>
+                        <div class="format-select">
+                            <label>Output Date Format</label>
+                            <select id="dos-format" onchange="calculateDosRange()">
+                                <option value="DAYS">Days Only</option>
+                                <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                <option value="WORD">Word Format</option>
+                                <option value="DAY_WORD">Day & Word</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="calc-row">
+                        <div class="form-group fg-grow">
+                            <label>Start Date</label>
+                            <input type="text" id="dos-start" placeholder="mm/dd/yyyy" class="input-lg" oninput="calculateDosRange()">
+                        </div>
+                        <div class="calc-op">−</div>
+                        <div class="form-group fg-grow">
+                            <label>End Date</label>
+                            <input type="text" id="dos-end" placeholder="mm/dd/yyyy" class="input-lg" oninput="calculateDosRange()">
+                        </div>
+                        <div class="calc-op">=</div>
+                        <div class="fg-grow">
+                            <label class="result-label">Difference</label>
+                            <div id="dos-result" class="result-display">--</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Denial Reason Analyzer -->
+                <div id="view-denial" class="view-section" style="display:none;">
+                    <h2>Denial Reason Analyzer</h2>
+                    <div class="form-group">
+                        <label>Search Denial Code or Keyword (e.g. CO-4, AUTH, PR-1)</label>
+                        <input type="text" id="denial-search" placeholder="Type code or keyword to search...">
+                    </div>
+                    <div id="denial-results-container"></div>
+                </div>
+
+                <!-- 4. Payer Directory -->
+                <div id="view-callog" class="view-section" style="display:none; padding:0; margin:-3rem; height:calc(100% + 6rem); border-radius:0 16px 16px 0; overflow:hidden;">
+                    <div style="display:flex; height:100%; min-height:80vh;">
+                        <div class="dir-sidebar">
+                            <div class="dir-sidebar-head">
+                                <h3>Payer Directory</h3>
+                                <input type="text" id="dir-search" placeholder="Search..." oninput="renderDirectory()">
+                                <button class="btn btn-sm btn-accent" id="btn-add-payer" title="Add Payer">+ Add Payer</button>
+                            </div>
+                            <div id="dir-list" class="dir-list"></div>
+                        </div>
+                        <div class="dir-main">
+                            <div id="dir-details" style="display:none;">
+                                <div class="dir-detail-header">
+                                    <div>
+                                        <h2 id="dd-name" class="dd-name">Payer Name</h2>
+                                        <div class="dd-sub">Payer ID: <span id="dd-id">--</span></div>
+                                    </div>
+                                    <div class="dd-contact">
+                                        <div class="dd-phone">☎ <span id="dd-phone">--</span></div>
+                                        <div class="dd-fax">Fax: <span id="dd-fax">--</span></div>
+                                    </div>
+                                </div>
+                                <div class="dd-grid-3">
+                                    <div><label>Fresh Claim TFL</label><div id="dd-tfl">--</div></div>
+                                    <div><label>Corrected Claim FL</label><div id="dd-ccfl">--</div></div>
+                                    <div><label>Appeal TFL</label><div id="dd-appeal-tfl">--</div></div>
+                                </div>
+                                <div class="dd-grid-3">
+                                    <div><label>Standard Mailing</label><div id="dd-mail" class="dd-addr">--</div></div>
+                                    <div><label>Correct Claim Mail</label><div id="dd-cc-mail" class="dd-addr">--</div></div>
+                                    <div><label>Appeals Mail</label><div id="dd-appeal-mail" class="dd-addr">--</div></div>
+                                </div>
+                                <div class="dd-email-row">
+                                    <label>Email / Portal</label><div id="dd-email">--</div>
+                                </div>
+                                <div class="dd-email-row">
+                                    <label>Quick Reach representative.</label><div id="dd-quick">--</div>
+                                </div>
+                            </div>
+                            <div id="dir-placeholder" class="dir-placeholder">
+                                <div class="placeholder-icon">📞</div>
+                                <h3>Select a Payer from the Directory</h3>
+                                <p>View contact details instantly.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Payer Modal -->
+                <div id="add-payer-modal" class="modal-overlay" style="display:none;">
+                    <div class="modal-box">
+                        <h3>Add / Edit Payer</h3>
+                        <form id="add-payer-form">
+                            <div class="modal-grid">
+                                <div class="form-group"><label>Payer Name</label><input type="text" id="ap-name" required></div>
+                                <div class="form-group"><label>Payer ID</label><input type="text" id="ap-id" required></div>
+                                <div class="form-group"><label>Phone</label><input type="text" id="ap-phone"></div>
+                                <div class="form-group"><label>Fax</label><input type="text" id="ap-fax"></div>
+                                <div class="form-group"><label>Fresh Claim TFL (Days)</label><input type="number" id="ap-tfl"></div>
+                                <div class="form-group"><label>Corrected Claim FL (Days)</label><input type="number" id="ap-ccfl"></div>
+                                <div class="form-group"><label>Appeal TFL (Days)</label><input type="number" id="ap-appeal-tfl"></div>
+                                <div class="form-group"><label>Quick Reach representative.</label><input type="text" id="ap-quick"></div>
+                                <div class="form-group" style="grid-column:span 2;"><label>Standard Mailing</label><textarea id="ap-mail" rows="2"></textarea></div>
+                                <div class="form-group" style="grid-column:span 2;"><label>Corrected Claim Mail</label><textarea id="ap-cc-mail" rows="2"></textarea></div>
+                                <div class="form-group" style="grid-column:span 2;"><label>Appeals Mail</label><textarea id="ap-appeal-mail" rows="2"></textarea></div>
+                                <div class="form-group" style="grid-column:span 2;"><label>Email / Portal</label><input type="text" id="ap-email"></div>
+                            </div>
+                            <div class="modal-actions">
+                                <button type="button" class="btn btn-secondary" id="btn-cancel-payer">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Save Payer</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 5. Daily Production Counter -->
+                <div id="view-prod" class="view-section" style="display:none;">
+                    <h2>Daily Production Counter</h2>
+                    <div class="prod-top-row">
+                        <div class="prod-config">
+                            <div class="form-group">
+                                <label>Daily Target (35-45)</label>
+                                <input type="number" id="prod-target" value="40" min="35" max="45" onchange="saveProdConfig()">
+                            </div>
+                            <div class="form-group">
+                                <label>Today's Count</label>
+                                <input type="number" id="prod-achieved" value="0" min="0" onchange="saveProdToday()">
+                            </div>
+                            <div class="form-group">
+                                <label>Special Project Count</label>
+                                <input type="number" id="prod-special" value="0" min="0" onchange="saveProdToday()">
+                            </div>
+                            <div class="form-group">
+                                <label>Special Project Ratio (e.g. 1:2)</label>
+                                <input type="text" id="prod-ratio" value="1:1" placeholder="1:2" onchange="saveProdToday()">
+                            </div>
+                            <button class="btn btn-primary btn-block" style="margin-top: 1rem;" onclick="saveProdToday(); toast('Production saved successfully')">Save Production Progress</button>
+                            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                                <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="markDayLeave(todayKey(), 'COMPANY')">Company Leave</button>
+                                <button class="btn btn-warn btn-sm" style="flex: 1;" onclick="markDayLeave(todayKey(), 'PERSONAL')">Personal Leave</button>
+                                <button class="btn btn-danger btn-sm" style="flex: 1;" onclick="clearDayLeave(todayKey())">Clear Leave</button>
+                            </div>
+                        </div>
+                        <div class="prod-status-card">
+                            <div class="prod-status-title">Today's Progress</div>
+                            <div id="prod-text" class="prod-big-num">0 / 40</div>
+                            <div class="tracker-bar"><div class="tracker-fill" id="prod-fill" style="width:0%;"></div></div>
+                            <div id="prod-perc" class="prod-perc">0%</div>
+                        </div>
+                    </div>
+
+                    <div class="prod-cards-row">
+                        <div class="stat-card"><div class="stat-label">Yesterday</div><div id="prod-yesterday" class="stat-val">0</div></div>
+                        <div class="stat-card"><div class="stat-label">Week Target</div><div id="prod-week-target" class="stat-val">0</div></div>
+                        <div class="stat-card"><div class="stat-label">Week Achieved</div><div id="prod-week-achieved" class="stat-val">0</div></div>
+                        <div class="stat-card"><div class="stat-label">Week Deficit</div><div id="prod-week-deficit" class="stat-val">0</div></div>
+                        <div class="stat-card"><div class="stat-label">Month Target</div><div id="prod-month-target" class="stat-val">0</div></div>
+                        <div class="stat-card"><div class="stat-label">Month Achieved</div><div id="prod-month-achieved" class="stat-val">0</div></div>
+                        <div class="stat-card"><div class="stat-label">Month Deficit</div><div id="prod-month-deficit" class="stat-val">0</div></div>
+                    </div>
+
+                    <div class="prod-downtime-section">
+                        <h3>Operational Downtime Entry</h3>
+                        <div class="dt-form-row">
+                            <div class="form-group"><label>System Ticket Number</label><input type="text" id="dt-ticket" placeholder="e.g. INC00123"></div>
+                            <div class="form-group"><label>Reason</label><input type="text" id="dt-reason" placeholder="System not working"></div>
+                            <button class="btn btn-primary btn-sm" onclick="saveDowntime()">Submit Downtime Record</button>
+                        </div>
+                        <div id="dt-list" class="dt-list"></div>
+                    </div>
+
+                    <div class="prod-history-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3>Production History</h3>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <select id="hist-month" onchange="renderProdHistory()"></select>
+                                <select id="hist-year" onchange="renderProdHistory()"></select>
+                            </div>
+                        </div>
+                        <div id="prod-history" class="prod-history-grid"></div>
+                    </div>
+                </div>
+
+                <!-- 6. Login Time & Break Tracker -->
+                <div id="view-time" class="view-section" style="display:none;">
+                    <div class="section-header">
+                        <h2>Login Time & Break Tracker</h2>
+                        <div class="format-select" style="display: flex; gap: 0.5rem; align-items: flex-end;">
+                            <div>
+                                <select id="time-hist-month" onchange="loadTimeHistory()"></select>
+                            </div>
+                            <div>
+                                <select id="time-hist-year" onchange="loadTimeHistory()"></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="time-layout">
+                        <div class="time-left-col">
+                            <div class="timer-card">
+                                <div class="timer-display" id="timer-display">00:00:00</div>
+                                <div class="timer-status" id="timer-status">Clocked Out</div>
+                                <div class="timer-controls">
+                                    <button class="btn btn-primary" id="btn-punch-in">Punch In</button>
+                                    <button class="btn btn-secondary" id="btn-break" disabled>Start Break</button>
+                                    <button class="btn btn-danger" id="btn-punch-out" disabled>Punch Out</button>
+                                </div>
+                            </div>
+                            <div class="time-stats-grid">
+                                <div class="stat-card-sm"><div class="stat-label">Work Goal</div><div class="stat-val-sm">08:15:00</div></div>
+                                <div class="stat-card-sm"><div class="stat-label">Time Left</div><div id="time-left" class="stat-val-sm">08:15:00</div></div>
+                                <div class="stat-card-sm"><div class="stat-label">Break Allowance</div><div class="stat-val-sm">01:15:00</div></div>
+                                <div class="stat-card-sm"><div class="stat-label">Break Left</div><div id="break-left" class="stat-val-sm">01:15:00</div></div>
+                            </div>
+                        </div>
+
+                        <div class="time-right-col">
+                            <div id="break-reason-container" style="display:none;" class="break-reason-box">
+                                <div class="form-group">
+                                    <label>Reason for break</label>
+                                    <input type="text" id="break-reason" placeholder="e.g. Lunch, Bio, Meeting">
+                                </div>
+                                <button class="btn btn-primary" id="btn-submit-break" style="width:100%;">Submit & Resume</button>
+                            </div>
+                            <h3>Breaks Taken (<span id="break-count">0</span>)</h3>
+                            <div id="break-list" class="break-list"><p class="muted">No breaks taken yet.</p></div>
+                        </div>
+                    </div>
+
+                    <div class="time-history-section">
+                        <h3>Work Summary</h3>
+                        <div class="time-summary-cards">
+                            <div class="stat-card"><div class="stat-label">Today Worked</div><div id="ts-today" class="stat-val">00:00</div></div>
+                            <div class="stat-card"><div class="stat-label">Yesterday Worked</div><div id="ts-yesterday" class="stat-val">00:00</div></div>
+                            <div class="stat-card"><div class="stat-label">This Week</div><div id="ts-week" class="stat-val">00:00</div></div>
+                            <div class="stat-card"><div class="stat-label">This Month</div><div id="ts-month" class="stat-val">00:00</div></div>
+                        </div>
+                        <div id="time-history-detail" class="prod-history-grid" style="margin-top: 1.5rem;"></div>
+                    </div>
+                </div>
+
+                <!-- 7. Julian Calendar Calculator -->
+                <div id="view-julian" class="view-section" style="display:none;">
+                    <div class="section-header">
+                        <h2>Julian Calendar Calculator</h2>
+                        <div class="format-select">
+                            <label>Output Date Format</label>
+                            <select id="julian-format" onchange="fromJulian()">
+                                <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                <option value="WORD">Word Format</option>
+                                <option value="DAY_WORD">Day & Word</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="julian-grid">
+                        <div class="julian-col">
+                            <h3>Number to Date</h3>
+                            <div class="form-group"><label>Day of Year (001-366)</label><input type="number" id="julian-day" placeholder="e.g. 001" oninput="fromJulian()"></div>
+                            <div class="form-group"><label>Reference Year</label>
+                                <select id="julian-year" onchange="fromJulian()">
+                                    <option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option>
+                                    <option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option>
+                                    <option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option>
+                                    <option value="2029">2029</option><option value="2030">2030</option>
+                                </select>
+                            </div>
+                            <div id="julian-result1" class="result-display" style="display:none; cursor:pointer;" title="Double-click to copy"></div>
+                        </div>
+                        <div class="julian-col julian-col-border">
+                            <h3>Date to Julian Number</h3>
+                            <div class="form-group"><label>Select Date</label><input type="text" id="julian-standard" placeholder="mm/dd/yyyy" oninput="toJulian()" onblur="formatDateInput(this); toJulian()"></div>
+                            <div id="julian-result2" class="result-display" style="display:none; cursor:pointer;" title="Double-click to copy"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5b. Target Tracker & Production (Advanced) -->
+                <div id="view-target-tracker" class="view-section" style="display:none;">
+                    <div class="section-header">
+                        <h2>Target Tracker & Daily Production</h2>
+                    </div>
+
+                    <!-- Top Stats Grid -->
+                    <div class="prod-cards-row" style="margin-bottom: 2rem;">
+                        <div class="stat-card">
+                            <div class="stat-label">Daily Target Progress</div>
+                            <div id="prod-big-num" class="stat-val" style="color: var(--accent-primary);">0%</div>
+                            <div class="tracker-bar" style="margin-top: 0.5rem;"><div id="prod-fill" class="tracker-fill" style="width: 0%"></div></div>
+                            <div id="prod-perc" style="font-size: 0.75rem; margin-top: 0.25rem;" class="muted">0 of 40 claims</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Today's Completed</div>
+                            <div id="stat-dp-today" class="stat-val">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Week Total</div>
+                            <div id="stat-dp-week" class="stat-val">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Week Amount</div>
+                            <div id="stat-dp-amount" class="stat-val">$0.00</div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+                        <!-- Quick Counter & Daily Entry -->
+                        <div class="card" style="padding: 1.5rem; background: var(--surface);">
+                            <h3 style="margin-bottom: 1.5rem;">Quick Counter</h3>
+                            <div class="form-group">
+                                <label>Target Claims</label>
+                                <input type="number" id="prod-target" value="40" onchange="updateProductionDisplay()">
+                            </div>
+                            <div class="form-group">
+                                <label>Current Manual Count</label>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <input type="number" id="prod-current" value="0" style="flex: 1;" onchange="updateProductionDisplay()">
+                                    <button class="btn btn-primary" onclick="incrementProd()">+1</button>
+                                </div>
+                            </div>
+                            
+                            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 2rem 0;">
+                            
+                            <h3 style="margin-bottom: 1.5rem;">Log Official Production</h3>
+                            <div class="form-group"><label>Date</label><input type="date" id="dp-date"></div>
+                            <div class="form-group"><label>Appeals Completed</label><input type="number" id="dp-completed" value="0"></div>
+                            <div class="form-group"><label>Appeals Sent</label><input type="number" id="dp-sent" value="0"></div>
+                            <div class="form-group"><label>Amount Collected ($)</label><input type="number" id="dp-amount" value="0.00" step="0.01"></div>
+                            <div class="form-group"><label>Notes</label><textarea id="dp-notes" rows="2" placeholder="Optional notes..."></textarea></div>
+                            <button class="btn btn-primary btn-block" onclick="saveDailyProd()">Save Official Record</button>
+                        </div>
+
+                        <!-- Production History -->
+                        <div class="time-history-section">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <h3>Production History (Last 7 Days)</h3>
+                                <span class="muted" style="font-size: 0.7rem;">Click date to view downtime/details</span>
+                            </div>
+                            <div id="dp-history-list" class="time-history-detail">
+                                <!-- History rows -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. Admin Panel (Only for Deena) -->
+                <div id="view-admin" class="view-section" style="display:none;">
+                    <div class="section-header">
+                        <h2>Admin Control Center</h2>
+                        <button class="btn btn-secondary" onclick="toggleUserManagement()">👥 User Management</button>
+                    </div>
+                    
+                    <div class="admin-stats-row" style="display: flex; gap: 1.5rem; margin-bottom: 2rem;">
+                        <div class="stat-card" style="cursor: pointer; min-width: 200px;" onclick="loadSignedUsers()">
+                            <div class="stat-label">Signed Users</div>
+                            <div id="active-user-count" class="stat-val">0</div>
+                            <div style="font-size: 0.7rem; color: var(--accent-success);">Click to view list</div>
+                        </div>
+                    </div>
+
+                    <div class="admin-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+                        <div class="card">
+                            <h3 style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Pending Approvals</h3>
+                            <div id="pending-users-list" class="admin-list">
+                                <p class="muted">No pending requests.</p>
+                            </div>
+                        </div>
+
+                        <div class="card" id="signed-users-section" style="display: none;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                                <h3>Signed Users List</h3>
+                                <button class="btn btn-sm btn-secondary" onclick="document.getElementById('signed-users-section').style.display='none'">Close</button>
+                            </div>
+                            <div id="signed-users-list" class="admin-list">
+                                <p class="muted">Loading users...</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card" id="user-mgmt-card" style="display: none; grid-column: span 2;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                                <h3>Organization User Management</h3>
+                                <button class="btn btn-sm btn-secondary" onclick="toggleUserManagement()">Close</button>
+                            </div>
+                            <p class="muted" style="font-size: 0.8rem; margin-bottom: 1rem;">Remove users who have left the organization.</p>
+                            <div id="all-users-list" class="admin-list">
+                                <p class="muted">Loading users...</p>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                <!-- 9. Appeals Tracker -->
+                <div id="view-appeals" class="view-section" style="display:none;">
+                    <div class="section-header">
+                        <h2>Appeals Tracker</h2>
+                    </div>
+                    
+                    <div class="appeals-tabs" style="margin-bottom: 2.5rem;">
+                        <button class="btn btn-primary appeal-tab-btn active" data-tab="send">📤 Send New Appeal</button>
+                        <button class="btn btn-secondary appeal-tab-btn" data-tab="received">📥 Received Appeals</button>
+                        <button class="btn btn-secondary appeal-tab-btn" data-tab="status">🔍 Track Status</button>
+                    </div>
+
+                    <div id="appeal-tab-send" class="appeal-tab-content">
+                        <div class="appeal-card-form">
+                            <div class="appeal-form-grid" style="grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                                <div class="form-group"><label>Claim ID / FIN #</label><input type="text" id="appeal-fin" placeholder="Enter FIN Number" required></div>
+                                <div class="form-group"><label>Insurance Payer</label><input type="text" id="appeal-payer" placeholder="e.g. Medicare"></div>
+                                <div class="form-group"><label>Date of Service</label><input type="text" id="appeal-dos" placeholder="mm/dd/yyyy" onblur="formatDateInput(this)"></div>
+                                <div class="form-group"><label>TFL Expiry Date</label><input type="text" id="appeal-tfl-exp" placeholder="mm/dd/yyyy" onblur="formatDateInput(this)"></div>
+                                <div class="form-group"><label>Billed Amount ($)</label><input type="text" id="appeal-amount" placeholder="0.00" onblur="formatCurrencyInput(this)"></div>
+                                <div class="form-group"><label>Assign To (Username)</label><input type="text" id="appeal-assign-to" placeholder="e.g. john_gms"></div>
+                            </div>
+                            <div class="form-group" style="margin-top: 1rem;">
+                                <label>Appeal Notes</label>
+                                <textarea id="appeal-notes" rows="3" placeholder="Add details for the receiver..."></textarea>
+                            </div>
+                            <div class="form-group" style="margin-top: 1rem;">
+                                <label>Additional Comments by User</label>
+                                <textarea id="appeal-comments" rows="2" placeholder="Type extra message to receiver..."></textarea>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
+                                <button class="btn btn-primary btn-lg" onclick="confirmSendAppeal()">Send Appeal to Receiver</button>
+                                <div class="priority-select">
+                                    <label style="font-size:0.7rem; color:var(--text-secondary);">PRIORITY:</label>
+                                    <select id="appeal-priority" style="padding: 0.4rem; font-size: 0.8rem;">
+                                        <option value="NORMAL">Normal</option>
+                                        <option value="URGENT">Urgent ⚠️</option>
+                                        <option value="CRITICAL">Critical 🚨</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 style="margin-top:3rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Sent History</h3>
+                        <div class="appeal-sort-row" style="margin: 1rem 0;">
+                            <label>Sort by:</label>
+                            <select id="sent-sort" onchange="renderSentAppeals()" class="select-sm">
+                                <option value="date">Date Sent (Newest)</option>
+                                <option value="tfl">TFL Expiry (Soonest)</option>
+                                <option value="amount">Amount (Highest)</option>
+                            </select>
+                        </div>
+                        <div id="sent-appeals-list" class="appeals-list"></div>
+                    </div>
+
+                    <div id="appeal-tab-received" class="appeal-tab-content" style="display:none;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <h3>Appeals Assigned to Me</h3>
+                            <div class="appeal-sort-row" style="margin-bottom: 0;">
+                                <label>Sort By:</label>
+                                <select id="received-sort" class="select-sm" onchange="renderReceivedAppeals()">
+                                    <option value="date">Date Received</option>
+                                    <option value="tfl">TFL Expiry</option>
+                                    <option value="amount">Billed Amount</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:0.5rem; margin-bottom:1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                            <button class="btn btn-sm btn-primary rx-tab-btn" onclick="filterReceived('PENDING', this)">Pending / To Do</button>
+                            <button class="btn btn-sm btn-secondary rx-tab-btn" onclick="filterReceived('IN_PROCESS', this)">In Process</button>
+                            <button class="btn btn-sm btn-secondary rx-tab-btn" onclick="filterReceived('COMPLETED', this)">Completed</button>
+                        </div>
+                        <div id="received-appeals-list" class="appeals-list"></div>
+                    </div>
+
+                    <div id="appeal-tab-status" class="appeal-tab-content" style="display:none;">
+                        <div class="tracker-search-box">
+                            <div class="form-group">
+                                <label>Track by FIN Number</label>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <input type="text" id="status-fin" placeholder="Enter FIN # to track status..." style="flex: 1;">
+                                    <button class="btn btn-primary" onclick="checkAppealStatus()">Search Status</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="appeal-status-result" style="margin-top:2rem;"></div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Productivity Deep Dive Modal -->
+    <div id="deep-dive-modal" class="modal-overlay" style="display:none; align-items: flex-end; padding: 0;">
+        <div class="modal-box" style="max-width: 1000px; width: 100%; height: 92vh; overflow-y: auto; background: var(--bg-color); border-radius: 20px 20px 0 0; animation: slideUp 0.3s ease-out; padding: 2.5rem; border-top: 1px solid rgba(255,255,255,0.1); box-shadow: 0 -10px 40px rgba(0,0,0,0.5);">
+            
+            <!-- HEADER -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
+                <div>
+                    <h2 id="dd-title-date" style="margin: 0; font-size: 2rem; color: white;">Date</h2>
+                    <p style="margin: 0; color: var(--text-secondary); font-size: 0.95rem; margin-top: 0.25rem;">Productivity Analytics Deep-Dive</p>
+                </div>
+                <button class="btn btn-sm btn-secondary" style="border-radius: 50%; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;" onclick="document.getElementById('deep-dive-modal').style.display='none'">✕</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; margin-bottom: 2rem;">
+                <!-- HERO SECTION -->
+                <div class="card" style="background: rgba(255,255,255,0.03); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem;">
+                    <div id="dd-score-ring" style="position: relative; width: 160px; height: 160px; border-radius: 50%; background: conic-gradient(var(--accent-primary) 0%, var(--accent-primary) 87%, rgba(255,255,255,0.1) 87%, rgba(255,255,255,0.1) 100%); display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;">
+                        <div style="width: 136px; height: 136px; border-radius: 50%; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);">
+                            <span id="dd-score" style="font-size: 3rem; font-weight: 800; color: white; line-height: 1;">0</span>
+                            <span style="font-size: 0.75rem; color: var(--text-secondary); letter-spacing: 1px; margin-top: 0.25rem;">SCORE</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span id="dd-grade" style="background: var(--accent-success); color: #000; font-weight: 800; padding: 0.25rem 0.75rem; border-radius: 8px; font-size: 1rem;">A GRADE</span>
+                    </div>
+                    <p id="dd-percentile" style="margin: 0; font-size: 0.85rem; color: var(--text-secondary); text-align: center;">Top 15% of your work days</p>
+                </div>
+
+                <!-- METRICS GRID -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="card" style="padding: 1.5rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem;">Total Worked</div>
+                        <div style="display: flex; align-items: baseline; gap: 0.75rem;">
+                            <span id="dd-total-worked" style="font-size: 2rem; font-weight: 700; color: white;">--</span>
+                            <span id="dd-tw-tag" style="font-size: 0.8rem; font-weight: 600;">--</span>
+                        </div>
+                    </div>
+                    <div class="card" style="padding: 1.5rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem;">Breaks Taken</div>
+                        <div style="display: flex; align-items: baseline; gap: 0.75rem;">
+                            <span id="dd-breaks-taken" style="font-size: 2rem; font-weight: 700; color: white;">--</span>
+                            <span id="dd-bt-tag" style="font-size: 0.8rem; font-weight: 600;">--</span>
+                        </div>
+                    </div>
+                    <div class="card" style="padding: 1.5rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem;">Avg Focus Block</div>
+                        <div style="display: flex; align-items: baseline; gap: 0.75rem;">
+                            <span id="dd-avg-focus" style="font-size: 2rem; font-weight: 700; color: white;">--</span>
+                            <span id="dd-af-tag" style="font-size: 0.8rem; font-weight: 600;">--</span>
+                        </div>
+                    </div>
+                    <div class="card" style="padding: 1.5rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem;">Break Sessions</div>
+                        <div style="display: flex; align-items: baseline; gap: 0.75rem;">
+                            <span id="dd-break-sessions" style="font-size: 2rem; font-weight: 700; color: white;">--</span>
+                            <span id="dd-bs-tag" style="font-size: 0.8rem; font-weight: 600;">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 24-HOUR HEATMAP & PATTERNS -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                <div class="card" style="padding: 1.5rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem; color: white;">24-Hour Activity Heatmap</h3>
+                    <div id="dd-heatmap" style="display: grid; grid-template-columns: repeat(12, 1fr); grid-template-rows: repeat(2, 1fr); gap: 6px;">
+                        <!-- 24 cells filled dynamically -->
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem; font-size: 0.75rem; color: var(--text-secondary);">
+                        <div style="display:flex; align-items:center; gap:0.25rem;"><div style="width: 12px; height: 12px; background: rgba(255,255,255,0.05); border-radius: 2px;"></div> Idle</div>
+                        <div style="display:flex; align-items:center; gap:0.25rem;"><div style="width: 12px; height: 12px; background: #f59e0b; border-radius: 2px;"></div> Break</div>
+                        <div style="display:flex; align-items:center; gap:0.25rem;"><div style="width: 12px; height: 12px; background: rgba(34, 197, 94, 0.4); border-radius: 2px;"></div> Med Focus</div>
+                        <div style="display:flex; align-items:center; gap:0.25rem;"><div style="width: 12px; height: 12px; background: #22c55e; border-radius: 2px;"></div> Deep Focus</div>
+                    </div>
+                </div>
+
+                <div class="card" style="padding: 1.5rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem; color: white;">Detected Patterns</h3>
+                    <div id="dd-patterns" style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                        <!-- Pills -->
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                <!-- DETAILED TIMELINE -->
+                <div class="card" style="padding: 1.5rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem; color: white;">Detailed Timeline</h3>
+                    <div id="dd-timeline" style="display: flex; flex-direction: column; gap: 1.5rem; position: relative; padding-left: 1.5rem; border-left: 2px solid rgba(255,255,255,0.1); margin-left: 0.5rem;">
+                        <!-- Timeline entries -->
+                    </div>
+                </div>
+
+                <!-- INSIGHTS & RECOMMENDATIONS -->
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div class="card" style="padding: 1.5rem; background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(255,255,255,0.02)); border: 1px solid rgba(56, 189, 248, 0.2);">
+                        <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem; color: white; display: flex; align-items: center; gap: 0.5rem;">✨ AI Insights</h3>
+                        <div id="dd-insights" style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">
+                            <!-- Insight lines -->
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="card" style="padding: 1.5rem; background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.2);">
+                            <div style="font-weight: 800; color: #22c55e; margin-bottom: 0.75rem; font-size: 0.8rem; letter-spacing: 1px;">✅ KEEP DOING</div>
+                            <div id="dd-rec-keep" style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">--</div>
+                        </div>
+                        <div class="card" style="padding: 1.5rem; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2);">
+                            <div style="font-weight: 800; color: #38bdf8; margin-bottom: 0.75rem; font-size: 0.8rem; letter-spacing: 1px;">💡 TRY THIS</div>
+                            <div id="dd-rec-try" style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TREND CHART -->
+            <div class="card" style="padding: 1.5rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h3 style="font-size: 1.1rem; color: white; margin: 0;">7-Day Productivity Trend</h3>
+                </div>
+                <div style="height: 180px; position: relative; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: flex-end; justify-content: space-around; padding-top: 1rem; padding-bottom: 0.5rem;" id="dd-trend-chart">
+                    <!-- Bars -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Day Detail Modal -->
+    <div id="day-detail-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-box" style="max-width: 500px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h3 id="ddm-date" style="margin: 0; font-size: 1.5rem; color: var(--accent-primary);">Date</h3>
+                <button class="btn btn-sm btn-secondary" onclick="document.getElementById('day-detail-modal').style.display='none'">✕</button>
+            </div>
+            
+            <div class="prod-cards-row prod-only" style="grid-template-columns: repeat(2, 1fr); margin-bottom: 2rem;">
+                <div class="stat-card" style="padding: 1rem;">
+                    <div class="stat-label">Daily Target</div>
+                    <div id="ddm-target" class="stat-val" style="font-size: 1.5rem;">0</div>
+                </div>
+                <div class="stat-card" style="padding: 1rem;">
+                    <div class="stat-label">Total Achieved</div>
+                    <div id="ddm-achieved" class="stat-val" style="font-size: 1.5rem; color: var(--accent-success);">0</div>
+                </div>
+            </div>
+
+            <div class="card prod-only" style="padding: 1.25rem; background: rgba(255,255,255,0.03); margin-bottom: 1.5rem; border-radius: 12px;">
+                <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 1rem; letter-spacing: 0.05em;">Count Breakdown</h4>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.9rem;">
+                    <span class="muted">Normal Claims</span>
+                    <span id="ddm-normal" style="font-weight: 600;">0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                    <span class="muted">Special Projects</span>
+                    <span id="ddm-special" style="font-weight: 600;">0</span>
+                </div>
+                <div id="ddm-ratio-info" style="font-size: 0.7rem; color: var(--accent-secondary); text-align: right; margin-top: 0.25rem;">Ratio --</div>
+                <div id="ddm-leave-info" style="font-size: 0.8rem; color: var(--accent-warn); text-align: center; margin-top: 0.5rem; display: none; font-weight: 600;">MARK AS LEAVE</div>
+            </div>
+
+            <div id="ddm-time-section" class="card" style="padding: 1.25rem; background: rgba(255,255,255,0.03); margin-bottom: 1.5rem; border-radius: 12px; display: none;">
+                <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 1rem; letter-spacing: 0.05em;">Time Tracking</h4>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.9rem;">
+                    <span class="muted">Punch In</span>
+                    <span id="ddm-punch-in" style="font-weight: 600;">--</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.9rem;">
+                    <span class="muted">Logged Hours</span>
+                    <span id="ddm-logged-time" style="font-weight: 600; color: var(--accent-primary);">00:00:00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                    <span class="muted">Break Time</span>
+                    <span id="ddm-break-time" style="font-weight: 600;">00:00:00</span>
+                </div>
+                <div style="margin-top: 1rem; border-top: 1px dashed var(--border-color); padding-top: 1rem;">
+                    <h5 style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Breaks Taken</h5>
+                    <div id="ddm-breaks-list" style="max-height: 100px; overflow-y: auto; font-size: 0.8rem;"></div>
+                </div>
+            </div>
+
+            <div id="ddm-downtime-section" class="prod-only">
+                <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.75rem; letter-spacing: 0.05em;">Operational Downtime Records</h4>
+                <div id="ddm-downtime-list" class="dt-list" style="max-height: 150px;">
+                    <p class="muted">No downtime records.</p>
+                </div>
+            </div>
+
+            <div id="ddm-edit-actions" class="prod-only" style="margin-top: 1.5rem; display: none; gap: 1rem;">
+                <button class="btn btn-primary btn-block" onclick="commitDayEdit()">Update Record</button>
+                <button class="btn btn-secondary btn-block" onclick="cancelDayEdit()">Cancel</button>
+            </div>
+            <div id="ddm-leave-actions" class="prod-only" style="margin-top: 1rem; display: none; gap: 0.5rem;">
+                <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="markDayLeave(currentEditingDk, 'COMPANY')">Company Leave</button>
+                <button class="btn btn-warn btn-sm" style="flex: 1;" onclick="markDayLeave(currentEditingDk, 'PERSONAL')">Personal Leave</button>
+                <button class="btn btn-danger btn-sm" style="flex: 1;" onclick="clearDayLeave(currentEditingDk)">Clear</button>
+            </div>
+            
+            <div id="ddm-view-actions" style="margin-top: 2rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                <button id="btn-edit-day" class="btn btn-accent btn-block prod-only" style="display: none;" onclick="enableDayEdit()">Edit This Record</button>
+                <button class="btn btn-primary btn-block" onclick="document.getElementById('day-detail-modal').style.display='none'">Close View</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Denial Detail Modal -->
+    <div id="denial-detail-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-box" style="max-width: 600px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                <h3 id="dm-code" style="color: var(--accent-primary); font-size: 1.5rem; margin: 0;">Code</h3>
+                <button class="btn btn-sm btn-secondary" onclick="document.getElementById('denial-detail-modal').style.display='none'">✕</button>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.03); padding: 1.25rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 3px solid var(--accent-primary);">
+                <div id="dm-desc" style="font-size: 1rem; margin-bottom: 1rem;">Description</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: var(--accent-success); margin-bottom: 0.25rem;">Recommended Action:</div>
+                <div id="dm-action" style="font-size: 0.9rem;">Action</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <!-- Calling Notes -->
+                <div class="card" style="padding: 1rem; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color);">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span style="font-size: 1.2rem;">📞</span>
+                        <h4 style="margin: 0; font-size: 0.9rem; color: var(--accent-secondary);">Calling Notes</h4>
+                    </div>
+                    <div id="dm-call-notes" style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4;">
+                        --
+                    </div>
+                </div>
+
+                <!-- Web/Portal Notes -->
+                <div class="card" style="padding: 1rem; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color);">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <span style="font-size: 1.2rem;">💻</span>
+                        <h4 style="margin: 0; font-size: 0.9rem; color: var(--accent-success);">Web / Portal Notes</h4>
+                    </div>
+                    <div id="dm-web-notes" style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4;">
+                        --
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.5rem;">General Notes / Context:</label>
+                <div id="dm-notes" style="font-size: 0.85rem; font-style: italic; color: #94a3b8;">--</div>
+            </div>
+            
+            <button class="btn btn-primary btn-block" onclick="document.getElementById('denial-detail-modal').style.display='none'">Close</button>
+        </div>
+    </div>
+    <!-- Password Change Modal -->
+    <div id="pwd-change-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-box" style="max-width: 400px;">
+            <h3>Change Password</h3>
+            <div class="form-group" style="position:relative;">
+                <label>Current Password</label>
+                <input type="password" id="cp-old" required style="padding-right: 40px;">
+                <svg onmousedown="togglePwd('cp-old', this, true)" onmouseup="togglePwd('cp-old', this, false)" onmouseleave="togglePwd('cp-old', this, false)" style="position:absolute; right:12px; top:35px; cursor:pointer; opacity: 0.5; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </div>
+            <div class="form-group" style="position:relative;">
+                <label>New Password</label>
+                <input type="password" id="cp-new" required style="padding-right: 40px;">
+                <svg onmousedown="togglePwd('cp-new', this, true)" onmouseup="togglePwd('cp-new', this, false)" onmouseleave="togglePwd('cp-new', this, false)" style="position:absolute; right:12px; top:35px; cursor:pointer; opacity: 0.5; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <div class="policy-hint">Must include 8+ characters, 1 number, and 1 special symbol.</div>
+            </div>
+            <div class="form-group" style="position:relative;">
+                <label>Confirm New Password</label>
+                <input type="password" id="cp-confirm" required style="padding-right: 40px;">
+                <svg onmousedown="togglePwd('cp-confirm', this, true)" onmouseup="togglePwd('cp-confirm', this, false)" onmouseleave="togglePwd('cp-confirm', this, false)" style="position:absolute; right:12px; top:35px; cursor:pointer; opacity: 0.5; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </div>
+            <div class="modal-actions" style="margin-top: 1.5rem;">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('pwd-change-modal').style.display='none'">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitPasswordChange()">Update Password</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Profile Modal -->
+    <div id="user-profile-modal" class="modal-overlay" style="display:none; align-items: center; justify-content: center;">
+        <div class="modal-box" style="max-width: 420px; width: 100%; text-align: center; padding: 2.5rem; background: linear-gradient(180deg, #1a1025 0%, #09090b 100%); border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.25); border: 1px solid rgba(139, 92, 246, 0.2); animation: fadeIn 0.3s ease-out;">
+            
+            <div style="position: relative; width: 100px; height: 100px; margin: 0 auto 1.5rem; border-radius: 50%; background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); padding: 3px;">
+                <div style="width: 100%; height: 100%; background: #09090b; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 3.5rem;">👤</div>
+                <div style="position: absolute; bottom: 5px; right: 5px; width: 20px; height: 20px; background: var(--accent-success); border-radius: 50%; border: 3px solid #09090b; box-shadow: 0 0 10px var(--accent-success);"></div>
+            </div>
+            
+            <h2 id="upm-username" style="margin-bottom: 0.25rem; font-size: 2rem; color: white; text-shadow: 0 0 20px rgba(255,255,255,0.2);">Username</h2>
+            <div id="upm-role" class="badge-hero" style="margin-bottom: 2rem; display: inline-block;">Role</div>
+            
+            <div style="text-align: left; background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; font-size: 0.95rem; border: 1px solid rgba(255,255,255,0.08); box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; align-items: center;">
+                    <span class="muted" style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">Current IST Time:</span>
+                    <span id="upm-session-time" style="font-weight: 800; color: var(--accent-primary); font-size: 1.2rem; text-shadow: 0 0 10px rgba(139,92,246,0.3); font-variant-numeric: tabular-nums;">--</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="muted" style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">Account Access:</span>
+                    <span id="upm-access-level" style="font-weight: 700; color: white; background: rgba(255,255,255,0.1); padding: 0.2rem 0.6rem; border-radius: 6px;">Standard</span>
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-block" style="margin-bottom: 1rem; font-size: 1rem; padding: 0.9rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);" onclick="document.getElementById('user-profile-modal').style.display='none'; document.getElementById('pwd-change-modal').style.display='flex'">Change Password</button>
+            <button class="btn btn-secondary btn-block" style="border-radius: 12px; padding: 0.9rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);" onclick="document.getElementById('user-profile-modal').style.display='none'">Close Dashboard</button>
+        </div>
+    </div>
+
+    <!-- Appeal Detail Modal (Matching Sender Format) -->
+    <div id="appeal-detail-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-box" style="max-width: 800px; width: 100%;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+                <h3 style="color: var(--accent-primary); font-size: 1.5rem; margin: 0;">Appeal Details</h3>
+                <button class="btn btn-sm btn-secondary" onclick="document.getElementById('appeal-detail-modal').style.display='none'">✕</button>
+            </div>
+            
+            <div class="appeal-card-form" style="background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                <div class="appeal-form-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                    <div class="form-group"><label>Claim ID / FIN #</label><input type="text" id="adm-fin-input" readonly style="background: rgba(0,0,0,0.2);"></div>
+                    <div class="form-group"><label>Insurance Payer</label><input type="text" id="adm-payer-input" readonly style="background: rgba(0,0,0,0.2);"></div>
+                    <div class="form-group"><label>Date of Service</label><input type="text" id="adm-dos-input" readonly style="background: rgba(0,0,0,0.2);"></div>
+                    <div class="form-group"><label>TFL Expiry Date</label><input type="text" id="adm-tfl-input" readonly style="background: rgba(0,0,0,0.2);"></div>
+                    <div class="form-group"><label>Billed Amount ($)</label><input type="text" id="adm-amount-input" readonly style="background: rgba(0,0,0,0.2);"></div>
+                    <div class="form-group"><label>Assign To (Username)</label><input type="text" id="adm-assign-input" readonly style="background: rgba(0,0,0,0.2);"></div>
+                    <div class="form-group"><label>Sender Username</label><input type="text" id="adm-sender-input" readonly style="background: rgba(0,0,0,0.2);"></div>
+                    <div class="form-group"><label>Current Status</label><input type="text" id="adm-status-input" readonly style="background: rgba(0,0,0,0.2);"></div>
+                </div>
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label>Appeal Notes / Comments</label>
+                    <textarea id="adm-notes-input" rows="4" readonly style="background: rgba(0,0,0,0.2);"></textarea>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
+                    <div class="priority-select">
+                        <label style="font-size:0.7rem; color:var(--text-secondary);">PRIORITY LEVEL:</label>
+                        <input type="text" id="adm-priority-input" readonly style="padding: 0.4rem; font-size: 0.8rem; background: rgba(0,0,0,0.2); width: auto; display: inline-block;">
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                <button class="btn btn-secondary btn-block" onclick="document.getElementById('appeal-detail-modal').style.display='none'">Close View</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="features.js"></script>
+</body>
+</html>
