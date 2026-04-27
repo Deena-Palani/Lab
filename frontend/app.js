@@ -1,6 +1,5 @@
-// Change this to your live Render URL once deployed
-// const API_BASE = 'http://127.0.0.1:8080/api';
-const API_BASE = 'https://YOUR-BACKEND-NAME.onrender.com/api';
+// Live Render Backend URL
+const API_BASE = 'https://arcaller-backend.onrender.com/api';
 
 window.togglePwd = function(id, icon, forceShow) {
     const input = document.getElementById(id);
