@@ -1,0 +1,16 @@
+[build]
+  # Set the directory that contains your site files
+  publish = "frontend"
+  
+  # Since this is a vanilla HTML/JS/CSS project without a build tool like Vite/Webpack, 
+  # no build command is needed. Netlify will simply deploy the contents of 'frontend'.
+  # command = ""
+
+# Handle Single Page Application (SPA) routing issues
+# This redirect rule ensures that if a user refreshes the page on a specific route 
+# (e.g., yoursite.com/dashboard), Netlify serves index.html instead of a 404 error,
+# allowing your frontend JavaScript to handle the routing properly.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
