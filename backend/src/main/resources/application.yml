@@ -1,0 +1,37 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    # Supabase Transaction Pooler - ap-southeast-1 (Singapore)
+    url: jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0&user=postgres.vtolctpavvfycowwdvgg
+    username: postgres.vtolctpavvfycowwdvgg
+    # Your Supabase database password
+    password: Tamilnadu@006
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 3
+      minimum-idle: 2
+      idle-timeout: 300000
+      max-lifetime: 600000
+      keepalive-time: 30000
+      validation-timeout: 5000
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  h2:
+    console:
+      enabled: false
+
+supabase:
+  url: https://vtolctpavvfycowwdvgg.supabase.co
+  apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0b2xjdHBhdnZmeWNvd3dkdmdnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NzAwNjA0MSwiZXhwIjoyMDkyNTgyMDQxfQ.YA3movZ-LzB8HB2ZEpqUX3FNXXrcAbGAZqZL1aXvGFM
+
+jwt:
+  secret: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ0b2xjdHBhdnZmeWNvd3dkdmdnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NzAwNjA0MSwiZXhwIjoyMDkyNTgyMDQxfQ.YA3movZ-LzB8HB2ZEpqUX3FNXXrcAbGAZqZL1aXvGFM
+  expiration: 86400000 # 24 hours

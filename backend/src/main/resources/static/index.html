@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMS Productivity Tools</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- AUTH SECTION -->
+    <div id="auth-container" class="card">
+        <div class="auth-box">
+            <div class="auth-logo">🏥</div>
+            <h2>GMS Portal</h2>
+            <p>Welcome back. Please login to continue.</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
+            
+            <form id="register-form" style="display: none;">
+                <div class="form-group">
+                    <label for="reg-username">Choose Username</label>
+                    <input type="text" id="reg-username" placeholder="e.g. jdoe_gms" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Create Password</label>
+                    <input type="password" id="reg-password" placeholder="Min. 8 characters" required>
+                    <div class="policy-hint">Must include 8+ characters, 1 number, and 1 special symbol (e.g. @, #, !).</div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Submit Registration Request</button>
+                <div class="policy-hint" style="text-align: center; margin-top: 0.75rem;">Note: New accounts require manual approval by Administrator (Deena).</div>
+            </form>
+
+            <div id="login-error" class="error-msg"></div>
+
+            <div class="auth-toggle" style="margin-top: 1.5rem; font-size: 0.85rem;">
+                <span id="toggle-text">Don't have an account?</span>
+                <a href="#" id="btn-toggle-auth" style="color: var(--accent-primary); text-decoration: none; font-weight: 600; margin-left: 0.5rem;">Register here</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP SECTION -->
+    <div id="app-container" style="display: none;">
+        <div class="main-layout">
+            <!-- SIDEBAR -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <span class="sidebar-logo">🏥</span>
+                    <div class="user-welcome">
+                        <div id="user-greeting" class="greeting-text">Welcome</div>
+                        <div id="user-display" class="username-text">Guest</div>
+                    </div>
+                </div>
+                <nav class="nav-menu">
+                    <a href="#" id="tab-tfl" class="nav-item active"><span class="icon">📝</span> Payer TFL Calculator</a>
+                    <a href="#" id="tab-dos" class="nav-item"><span class="icon">🔍</span> DOS Range Calculator</a>
+                    <a href="#" id="tab-denial" class="nav-item"><span class="icon">🔖</span> Denial Reason Analyzer</a>
+                    <a href="#" id="tab-callog" class="nav-item"><span class="icon">📞</span> Payer Directory</a>
+                    <a href="#" id="tab-prod" class="nav-item"><span class="icon">📊</span> Daily Production Counter</a>
+                    <a href="#" id="tab-time" class="nav-item"><span class="icon">🕒</span> Login Time & Break Tracker</a>
+                    <a href="#" id="tab-julian" class="nav-item"><span class="icon">📅</span> Julian Calendar Calculator</a>
+                    <a href="#" id="tab-appeals" class="nav-item"><span class="icon">📨</span> Appeals Tracker</a>
+                    <a href="#" id="tab-admin" class="nav-item" style="display:none;"><span class="icon">🔑</span> Admin Panel</a>
+                </nav>
+                <div class="sidebar-footer">
+                    <button class="btn btn-secondary btn-sm" id="btn-logout" style="width:100%;">Logout</button>
+                </div>
+            </aside>
+
+            <!-- MAIN CONTENT -->
+            <main class="content-pane">
+
+                <!-- 1. TFL Calculator -->
+                <div id="view-tfl" class="view-section active">
+                    <div class="section-header">
+                        <h2>Payer TFL Calculator</h2>
+                        <div class="format-select">
+                            <label>Output Date Format</label>
+                            <select id="tfl-format" onchange="calculateTfl()">
+                                <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                <option value="WORD">Word Format</option>
+                                <option value="DAY_WORD">Day & Word</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="calc-row">
+                        <div class="form-group fg-grow">
+                            <label>Date of Service (DOS)</label>
+                            <input type="text" id="tfl-dos" placeholder="mm/dd/yyyy" class="input-lg" oninput="calculateTfl()">
+                        </div>
+                        <div class="calc-op">+</div>
+                        <div class="form-group fg-mid">
+                            <label>Limit (Days)</label>
+                            <input type="number" id="tfl-limit" value="120" class="input-lg input-center" oninput="calculateTfl()">
+                        </div>
+                        <div class="calc-op">=</div>
+                        <div class="fg-grow">
+                            <label class="result-label">Deadline Date</label>
+                            <div id="tfl-result" class="result-display">--</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. DOS Range Calculator -->
+                <div id="view-dos" class="view-section" style="display:none;">
+                    <div class="section-header">
+                        <h2>DOS Range Calculator</h2>
+                        <div class="format-select">
+                            <label>Output Date Format</label>
+                            <select id="dos-format" onchange="calculateDosRange()">
+                                <option value="DAYS">Days Only</option>
+                                <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                <option value="WORD">Word Format</option>
+                                <option value="DAY_WORD">Day & Word</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="calc-row">
+                        <div class="form-group fg-grow">
+                            <label>Start Date</label>
+                            <input type="text" id="dos-start" placeholder="mm/dd/yyyy" class="input-lg" oninput="calculateDosRange()">
+                        </div>
+                        <div class="calc-op">−</div>
+                        <div class="form-group fg-grow">
+                            <label>End Date</label>
+                            <input type="text" id="dos-end" placeholder="mm/dd/yyyy" class="input-lg" oninput="calculateDosRange()">
+                        </div>
+                        <div class="calc-op">=</div>
+                        <div class="fg-grow">
+                            <label class="result-label">Difference</label>
+                            <div id="dos-result" class="result-display">--</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Denial Reason Analyzer -->
+                <div id="view-denial" class="view-section" style="display:none;">
+                    <h2>Denial Reason Analyzer</h2>
+                    <div class="form-group">
+                        <label>Search Denial Code or Keyword (e.g. CO-4, AUTH, PR-1)</label>
+                        <input type="text" id="denial-search" placeholder="Type code or keyword to search...">
+                    </div>
+                    <div id="denial-results-container"></div>
+                </div>
+
+                <!-- 4. Payer Directory -->
+                <div id="view-callog" class="view-section" style="display:none; padding:0; margin:-3rem; height:calc(100% + 6rem); border-radius:0 16px 16px 0; overflow:hidden;">
+                    <div style="display:flex; height:100%; min-height:80vh;">
+                        <div class="dir-sidebar">
+                            <div class="dir-sidebar-head">
+                                <h3>Payer Directory</h3>
+                                <input type="text" id="dir-search" placeholder="Search..." oninput="renderDirectory()">
+                                <button class="btn btn-sm btn-accent" id="btn-add-payer" title="Add Payer">+ Add Payer</button>
+                            </div>
+                            <div id="dir-list" class="dir-list"></div>
+                        </div>
+                        <div class="dir-main">
+                            <div id="dir-details" style="display:none;">
+                                <div class="dir-detail-header">
+                                    <div>
+                                        <h2 id="dd-name" class="dd-name">Payer Name</h2>
+                                        <div class="dd-sub">Payer ID: <span id="dd-id">--</span></div>
+                                    </div>
+                                    <div class="dd-contact">
+                                        <div class="dd-phone">☎ <span id="dd-phone">--</span></div>
+                                        <div class="dd-fax">Fax: <span id="dd-fax">--</span></div>
+                                    </div>
+                                </div>
+                                <div class="dd-grid-3">
+                                    <div><label>Fresh Claim TFL</label><div id="dd-tfl">--</div></div>
+                                    <div><label>Corrected Claim FL</label><div id="dd-ccfl">--</div></div>
+                                    <div><label>Appeal TFL</label><div id="dd-appeal-tfl">--</div></div>
+                                </div>
+                                <div class="dd-grid-3">
+                                    <div><label>Standard Mailing</label><div id="dd-mail" class="dd-addr">--</div></div>
+                                    <div><label>Correct Claim Mail</label><div id="dd-cc-mail" class="dd-addr">--</div></div>
+                                    <div><label>Appeals Mail</label><div id="dd-appeal-mail" class="dd-addr">--</div></div>
+                                </div>
+                                <div class="dd-email-row">
+                                    <label>Email / Portal</label><div id="dd-email">--</div>
+                                </div>
+                                <div class="dd-email-row">
+                                    <label>Quick Reach</label><div id="dd-quick">--</div>
+                                </div>
+                            </div>
+                            <div id="dir-placeholder" class="dir-placeholder">
+                                <div class="placeholder-icon">📞</div>
+                                <h3>Select a Payer from the Directory</h3>
+                                <p>View contact details instantly.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Payer Modal -->
+                <div id="add-payer-modal" class="modal-overlay" style="display:none;">
+                    <div class="modal-box">
+                        <h3>Add / Edit Payer</h3>
+                        <form id="add-payer-form">
+                            <div class="modal-grid">
+                                <div class="form-group"><label>Payer Name</label><input type="text" id="ap-name" required></div>
+                                <div class="form-group"><label>Payer ID</label><input type="text" id="ap-id" required></div>
+                                <div class="form-group"><label>Phone</label><input type="text" id="ap-phone"></div>
+                                <div class="form-group"><label>Fax</label><input type="text" id="ap-fax"></div>
+                                <div class="form-group"><label>Fresh Claim TFL (Days)</label><input type="number" id="ap-tfl"></div>
+                                <div class="form-group"><label>Corrected Claim FL (Days)</label><input type="number" id="ap-ccfl"></div>
+                                <div class="form-group"><label>Appeal TFL (Days)</label><input type="number" id="ap-appeal-tfl"></div>
+                                <div class="form-group"><label>Quick Reach</label><input type="text" id="ap-quick"></div>
+                                <div class="form-group" style="grid-column:span 2;"><label>Standard Mailing</label><textarea id="ap-mail" rows="2"></textarea></div>
+                                <div class="form-group" style="grid-column:span 2;"><label>Corrected Claim Mail</label><textarea id="ap-cc-mail" rows="2"></textarea></div>
+                                <div class="form-group" style="grid-column:span 2;"><label>Appeals Mail</label><textarea id="ap-appeal-mail" rows="2"></textarea></div>
+                                <div class="form-group" style="grid-column:span 2;"><label>Email / Portal</label><input type="text" id="ap-email"></div>
+                            </div>
+                            <div class="modal-actions">
+                                <button type="button" class="btn btn-secondary" id="btn-cancel-payer">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Save Payer</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 5. Daily Production Counter -->
+                <div id="view-prod" class="view-section" style="display:none;">
+                    <h2>Daily Production Counter</h2>
+                    <div class="prod-top-row">
+                        <div class="prod-config">
+                            <div class="form-group">
+                                <label>Daily Target (35-45)</label>
+                                <input type="number" id="prod-target" value="40" min="35" max="45" onchange="saveProdConfig()">
+                            </div>
+                            <div class="form-group">
+                                <label>Today's Count</label>
+                                <input type="number" id="prod-achieved" value="0" min="0" onchange="saveProdToday()">
+                            </div>
+                            <div class="form-group">
+                                <label>Special Project Count</label>
+                                <input type="number" id="prod-special" value="0" min="0" onchange="saveProdToday()">
+                            </div>
+                            <div class="form-group">
+                                <label>Special Project Ratio (e.g. 1:2)</label>
+                                <input type="text" id="prod-ratio" value="1:1" placeholder="1:2" onchange="saveProdToday()">
+                            </div>
+                        </div>
+                        <div class="prod-status-card">
+                            <div class="prod-status-title">Today's Progress</div>
+                            <div id="prod-text" class="prod-big-num">0 / 40</div>
+                            <div class="tracker-bar"><div class="tracker-fill" id="prod-fill" style="width:0%;"></div></div>
+                            <div id="prod-perc" class="prod-perc">0%</div>
+                        </div>
+                    </div>
+
+                    <div class="prod-cards-row">
+                        <div class="stat-card"><div class="stat-label">Yesterday</div><div id="prod-yesterday" class="stat-val">0</div></div>
+                        <div class="stat-card"><div class="stat-label">Week Target</div><div id="prod-week-target" class="stat-val">0</div></div>
+                        <div class="stat-card"><div class="stat-label">Week Achieved</div><div id="prod-week-achieved" class="stat-val">0</div></div>
+                        <div class="stat-card"><div class="stat-label">Week Deficit</div><div id="prod-week-deficit" class="stat-val">0</div></div>
+                        <div class="stat-card"><div class="stat-label">Month Target</div><div id="prod-month-target" class="stat-val">0</div></div>
+                        <div class="stat-card"><div class="stat-label">Month Achieved</div><div id="prod-month-achieved" class="stat-val">0</div></div>
+                        <div class="stat-card"><div class="stat-label">Month Deficit</div><div id="prod-month-deficit" class="stat-val">0</div></div>
+                    </div>
+
+                    <div class="prod-downtime-section">
+                        <h3>Downtime Log</h3>
+                        <div class="dt-form-row">
+                            <div class="form-group"><label>Ticket #</label><input type="text" id="dt-ticket" placeholder="INC00123"></div>
+                            <div class="form-group"><label>Reason</label><input type="text" id="dt-reason" placeholder="System not working"></div>
+                            <button class="btn btn-primary btn-sm" onclick="saveDowntime()">Log Downtime</button>
+                        </div>
+                        <div id="dt-list" class="dt-list"></div>
+                    </div>
+
+                    <div class="prod-history-section">
+                        <h3>Monthly Production History</h3>
+                        <div id="prod-history" class="prod-history-grid"></div>
+                    </div>
+                </div>
+
+                <!-- 6. Login Time & Break Tracker -->
+                <div id="view-time" class="view-section" style="display:none;">
+                    <div class="section-header">
+                        <h2>Login Time & Break Tracker</h2>
+                        <div class="format-select">
+                            <label>View History</label>
+                            <select id="time-history-select" onchange="loadTimeHistory()">
+                                <option value="today">Today</option>
+                                <option value="yesterday">Yesterday</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="time-layout">
+                        <div class="time-left-col">
+                            <div class="timer-card">
+                                <div class="timer-display" id="timer-display">00:00:00</div>
+                                <div class="timer-status" id="timer-status">Clocked Out</div>
+                                <div class="timer-controls">
+                                    <button class="btn btn-primary" id="btn-punch-in">Punch In</button>
+                                    <button class="btn btn-secondary" id="btn-break" disabled>Start Break</button>
+                                    <button class="btn btn-danger" id="btn-punch-out" disabled>Punch Out</button>
+                                </div>
+                            </div>
+                            <div class="time-stats-grid">
+                                <div class="stat-card-sm"><div class="stat-label">Work Goal</div><div class="stat-val-sm">08:15:00</div></div>
+                                <div class="stat-card-sm"><div class="stat-label">Time Left</div><div id="time-left" class="stat-val-sm">08:15:00</div></div>
+                                <div class="stat-card-sm"><div class="stat-label">Break Allowance</div><div class="stat-val-sm">01:15:00</div></div>
+                                <div class="stat-card-sm"><div class="stat-label">Break Left</div><div id="break-left" class="stat-val-sm">01:15:00</div></div>
+                            </div>
+                        </div>
+
+                        <div class="time-right-col">
+                            <div id="break-reason-container" style="display:none;" class="break-reason-box">
+                                <div class="form-group">
+                                    <label>Reason for break</label>
+                                    <input type="text" id="break-reason" placeholder="e.g. Lunch, Bio, Meeting">
+                                </div>
+                                <button class="btn btn-primary" id="btn-submit-break" style="width:100%;">Submit & Resume</button>
+                            </div>
+                            <h3>Breaks Taken (<span id="break-count">0</span>)</h3>
+                            <div id="break-list" class="break-list"><p class="muted">No breaks taken yet.</p></div>
+                        </div>
+                    </div>
+
+                    <div class="time-history-section">
+                        <h3>Work Summary</h3>
+                        <div class="time-summary-cards">
+                            <div class="stat-card"><div class="stat-label">Today Worked</div><div id="ts-today" class="stat-val">00:00</div></div>
+                            <div class="stat-card"><div class="stat-label">Yesterday Worked</div><div id="ts-yesterday" class="stat-val">00:00</div></div>
+                            <div class="stat-card"><div class="stat-label">This Week</div><div id="ts-week" class="stat-val">00:00</div></div>
+                            <div class="stat-card"><div class="stat-label">This Month</div><div id="ts-month" class="stat-val">00:00</div></div>
+                        </div>
+                        <div id="time-history-detail" class="time-history-detail"></div>
+                    </div>
+                </div>
+
+                <!-- 7. Julian Calendar Calculator -->
+                <div id="view-julian" class="view-section" style="display:none;">
+                    <div class="section-header">
+                        <h2>Julian Calendar Calculator</h2>
+                        <div class="format-select">
+                            <label>Output Date Format</label>
+                            <select id="julian-format" onchange="fromJulian()">
+                                <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                <option value="WORD">Word Format</option>
+                                <option value="DAY_WORD">Day & Word</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="julian-grid">
+                        <div class="julian-col">
+                            <h3>Number to Date</h3>
+                            <div class="form-group"><label>Day of Year (001-366)</label><input type="number" id="julian-day" placeholder="e.g. 001" oninput="fromJulian()"></div>
+                            <div class="form-group"><label>Reference Year</label>
+                                <select id="julian-year" onchange="fromJulian()">
+                                    <option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option>
+                                    <option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option>
+                                    <option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option>
+                                    <option value="2029">2029</option><option value="2030">2030</option>
+                                </select>
+                            </div>
+                            <div id="julian-result1" class="result-display" style="display:none; cursor:pointer;" title="Double-click to copy"></div>
+                        </div>
+                        <div class="julian-col julian-col-border">
+                            <h3>Date to Number</h3>
+                            <div class="form-group"><label>Select Date</label><input type="text" id="julian-standard" placeholder="mm/dd/yyyy" oninput="toJulian()"></div>
+                            <div id="julian-result2" class="result-display" style="display:none; cursor:pointer;" title="Double-click to copy"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. Admin Panel (Only for Deena) -->
+                <div id="view-admin" class="view-section" style="display:none;">
+                    <h2>Administrative Controls</h2>
+                    <div class="card" style="margin-top: 1rem;">
+                        <h3>Pending User Approvals</h3>
+                        <p class="muted">New user registration requests requiring review.</p>
+                        <div id="pending-users-list" class="admin-list">
+                            <p class="muted">Loading pending requests...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9. Appeals Tracker -->
+                <div id="view-appeals" class="view-section" style="display:none;">
+                    <div class="section-header">
+                        <h2>Appeals Tracker</h2>
+                    </div>
+                    
+                    <div class="appeals-tabs" style="margin-bottom: 2.5rem;">
+                        <button class="btn btn-primary appeal-tab-btn active" data-tab="send">📤 Send New Appeal</button>
+                        <button class="btn btn-secondary appeal-tab-btn" data-tab="received">📥 Received Appeals</button>
+                        <button class="btn btn-secondary appeal-tab-btn" data-tab="status">🔍 Track Status</button>
+                    </div>
+
+                    <div id="appeal-tab-send" class="appeal-tab-content">
+                        <div class="appeal-card-form">
+                            <div class="appeal-form-grid" style="grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                                <div class="form-group"><label>Claim ID / FIN #</label><input type="text" id="appeal-fin" placeholder="Enter FIN Number" required></div>
+                                <div class="form-group"><label>Insurance Payer</label><input type="text" id="appeal-payer" placeholder="e.g. Medicare"></div>
+                                <div class="form-group"><label>Date of Service</label><input type="text" id="appeal-dos" placeholder="mm/dd/yyyy"></div>
+                                <div class="form-group"><label>TFL Expiry Date</label><input type="text" id="appeal-tfl-exp" placeholder="mm/dd/yyyy"></div>
+                                <div class="form-group"><label>Billed Amount ($)</label><input type="number" id="appeal-amount" placeholder="0.00" step="0.01"></div>
+                                <div class="form-group"><label>Assign To (Username)</label><input type="text" id="appeal-assign-to" placeholder="e.g. john_gms"></div>
+                            </div>
+                            <div class="form-group" style="margin-top: 1rem;">
+                                <label>Appeal Notes / Justification</label>
+                                <textarea id="appeal-notes" rows="3" placeholder="Add details for the receiver..."></textarea>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
+                                <button class="btn btn-primary btn-lg" onclick="confirmSendAppeal()">Send Appeal to Receiver</button>
+                                <div class="priority-select">
+                                    <label style="font-size:0.7rem; color:var(--text-secondary);">PRIORITY:</label>
+                                    <select id="appeal-priority" style="padding: 0.4rem; font-size: 0.8rem;">
+                                        <option value="NORMAL">Normal</option>
+                                        <option value="URGENT">Urgent ⚠️</option>
+                                        <option value="CRITICAL">Critical 🚨</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 style="margin-top:3rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Sent History</h3>
+                        <div class="appeal-sort-row" style="margin: 1rem 0;">
+                            <label>Sort by:</label>
+                            <select id="sent-sort" onchange="renderSentAppeals()" class="select-sm">
+                                <option value="date">Date Sent (Newest)</option>
+                                <option value="tfl">TFL Expiry (Soonest)</option>
+                                <option value="amount">Amount (Highest)</option>
+                            </select>
+                        </div>
+                        <div id="sent-appeals-list" class="appeals-list"></div>
+                    </div>
+
+                    <div id="appeal-tab-received" class="appeal-tab-content" style="display:none;">
+                        <h3 style="margin-bottom: 1.5rem;">Appeals Assigned to Me</h3>
+                        <div id="received-appeals-list" class="appeals-list"></div>
+                    </div>
+
+                    <div id="appeal-tab-status" class="appeal-tab-content" style="display:none;">
+                        <div class="tracker-search-box">
+                            <div class="form-group">
+                                <label>Track by FIN Number</label>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <input type="text" id="status-fin" placeholder="Enter FIN # to track status..." style="flex: 1;">
+                                    <button class="btn btn-primary" onclick="checkAppealStatus()">Search Status</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="appeal-status-result" style="margin-top:2rem;"></div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="features.js"></script>
+</body>
+</html>

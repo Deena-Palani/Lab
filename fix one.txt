@@ -1,0 +1,51 @@
+under the dos range calculator need to fix that it have Output Date Format
+
+under Julian Calendar Calculator need to copy the date / output by double click.  and Standard Date: 10/27/2026 no need only output as like as i want in payer tfl caclutor method  same applies for Date to Number
+
+
+
+Login Time & Break Tracker
+- i dont like the formant so make it look best and also i want it as clod based and if i exit the app today i need to look tomorrow login i need to have the option of see my yesterdays login / break and all features same applied for a month and need to calculate my entired wored hour for week and day month or year 
+
+and the app need to have password like 
+Admin - login 
+admin123 - pass
+
+make it look like real application and ensure very smooth and fast 
+
+under Daily Production Counter
+
+need to see my today production and yesterday and defict for a month also need to have option to change the target and ad the end ill add the count it was a refrece to me to see my count 
+
+also it neede to show my month target and weekly target and achived and defict 
+
+also i need to have downtime say for example if my sustem us not working 
+
+i have downtime so i need to have option to save my ticket number for the day and reason for downtime 
+
+
+under Payer Directory
+all good 
+
+but i no need comments to save and no recent call option need
+
+
+
+
+also add 
+
+add option very small button to ensure that i can add details lile Payer ID: Standard TFL
+ and rest also the tfl of stander is  need to be as fresh claim tfl 
+
+also in Denial Reason Analyzer
+ i need to have optin like if i enter auth 
+
+it need to show auth denial and different type of the auth denial notes use googe to get those infomations.
+
+
+
+i want notes and how to work on the denial use ar calling online website also add few denials 
+
+
+
+ 
